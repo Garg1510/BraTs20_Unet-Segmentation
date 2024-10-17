@@ -1,24 +1,10 @@
-# https://youtu.be/oB35sV1npVI
-"""
-Use this code to get your BRATS 2020 dataset ready for semantic segmentation. 
-Code can be divided into a few parts....
 
-#Combine 
-#Changing mask pixel values (labels) from 4 to 3 (as the original labels are 0, 1, 2, 4)
-#Visualize
-
-
-https://pypi.org/project/nibabel/
-
-All BraTS multimodal scans are available as NIfTI files (.nii.gz) -> commonly used medical imaging format to store brain imagin data obtained using MRI and describe different MRI settings
 
 T1: T1-weighted, native image, sagittal or axial 2D acquisitions, with 1–6 mm slice thickness.
 T1c: T1-weighted, contrast-enhanced (Gadolinium) image, with 3D acquisition and 1 mm isotropic voxel size for most patients.
 T2: T2-weighted image, axial 2D acquisition, with 2–6 mm slice thickness.
 FLAIR: T2-weighted FLAIR image, axial, coronal, or sagittal 2D acquisitions, 2–6 mm slice thickness.
 
-#Note: Segmented file name in Folder 355 has a weird name. Rename it to match others.
-"""
 
 
 import numpy as np
@@ -30,18 +16,7 @@ from tifffile import imsave
 
 from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
-##########################
-#This part of the code to get an initial understanding of the dataset.
-#################################
-#PART 1: Load sample images and visualize
-#Includes, dividing each image by its max to scale them to [0,1]
-#Converting mask from float to uint8
-#Changing mask pixel values (labels) from 4 to 3 (as the original labels are 0, 1, 2, 4)
-#Visualize
-###########################################
-#View a few images
 
-#Note: Segmented file name in Folder 355 has a weird name. Rename it to match others.
 
 TRAIN_DATASET_PATH = 'BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData/'
 #VALIDATION_DATASET_PATH = 'BraTS2020_ValidationData/MICCAI_BraTS2020_ValidationData'
@@ -91,13 +66,9 @@ plt.title('Mask')
 plt.show()
 
 
-
-##################################################
 #PART 2: Explore the process of combining images to channels and divide them to patches
-#Includes...
 #Combining all 4 images to 4 channels of a numpy array.
-#
-################################################
+
 #Flair, T1CE, annd T2 have the most information
 #Combine t1ce, t2, and flair into single multichannel image
 
@@ -138,10 +109,7 @@ np.save('BraTS2020_TrainingData/combined255.npy', combined_x)
 my_img=np.load('BraTS2020_TrainingData/combined255.npy')
 
 test_mask = to_categorical(test_mask, num_classes=4)
-####################################################################
-#####################################
-#End of understanding the dataset. Now get it organized.
-#####################################
+
 
 #Now let us apply the same as above to all the images...
 #Merge channels, crop, patchify, save
@@ -196,14 +164,11 @@ for img in range(len(t2_list)):   #Using t1_list as all lists are of same size
         print("I am useless")   
    
      
-################################################################
+
 #Repeat the same from above for validation data folder OR
 #Split training data into train and validation
 
-"""
-Code for splitting folder into train, test, and val.
-Once the new folders are created rename them and arrange in the format below to be used
-for semantic segmentation using data generators. 
+. 
 
 pip install split-folders
 """
