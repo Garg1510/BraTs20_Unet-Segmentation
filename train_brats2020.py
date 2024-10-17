@@ -1,21 +1,3 @@
-# https://youtu.be/ScdCQqLtnis
-"""
-@author: Sreenivas Bhattiprolu
-
-Code to train batches of cropped BraTS 2020 images using 3D U-net.
-
-Please get the data ready and define custom data gnerator using the other
-files in this directory.
-
-Images are expected to be 128x128x128x3 npy data (3 corresponds to the 3 channels for 
-                                                  test_image_flair, test_image_t1ce, test_image_t2)
-Change the U-net input shape based on your input dataset shape (e.g. if you decide to only se 2 channels or all 4 channels)
-
-Masks are expected to be 128x128x128x3 npy data (4 corresponds to the 4 classes / labels)
-
-
-You can change input image sizes to customize for your computing resources.
-"""
 
 
 import os
@@ -29,7 +11,7 @@ import random
 
 
 
-####################################################
+
 train_img_dir = "BraTS2020_TrainingData/input_data_128/train/images/"
 train_mask_dir = "BraTS2020_TrainingData/input_data_128/train/masks/"
 
@@ -60,7 +42,7 @@ plt.imshow(test_mask[:,:,n_slice])
 plt.title('Mask')
 plt.show()
 
-#############################################################
+
 #Optional step of finding the distribution of each class and calculating appropriate weights
 #Alternatively you can just assign equal weights and see how well the model performs: 0.25, 0.25, 0.25, 0.25
 
@@ -94,7 +76,7 @@ wt3 = round((total_labels/(n_classes*label_3)), 2)
 #wt0, wt1, wt2, wt3 = 0.26, 22.53, 22.53, 26.21
 #These weihts can be used for Dice loss 
 
-##############################################################
+
 #Define the image generators for training and validation
 
 train_img_dir = "BraTS2020_TrainingData/input_data_128/train/images/"
@@ -108,9 +90,9 @@ train_mask_list = os.listdir(train_mask_dir)
 
 val_img_list=os.listdir(val_img_dir)
 val_mask_list = os.listdir(val_mask_dir)
-##################################
 
-########################################################################
+
+
 batch_size = 2
 
 train_img_datagen = imageLoader(train_img_dir, train_img_list, 
@@ -145,7 +127,7 @@ plt.title('Mask')
 plt.show()
 
 
-###########################################################################
+
 #Define loss, metrics and optimizer to be used for training
 wt0, wt1, wt2, wt3 = 0.25,0.25,0.25,0.25
 import segmentation_models_3D as sm
@@ -157,7 +139,6 @@ metrics = ['accuracy', sm.metrics.IOUScore(threshold=0.5)]
 
 LR = 0.0001
 optim = keras.optimizers.Adam(LR)
-#######################################################################
 #Fit the model 
 
 steps_per_epoch = len(train_img_list)//batch_size
@@ -187,7 +168,7 @@ history=model.fit(train_img_datagen,
           )
 
 model.save('brats_3d.hdf5')
-##################################################################
+
 
 
 #plot the training and validation IoU and loss at each epoch
@@ -212,7 +193,7 @@ plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
 plt.legend()
 plt.show()
-#################################################
+
 from keras.models import load_model
 
 #Load model for prediction or continue training
@@ -241,7 +222,6 @@ history2=my_model.fit(train_img_datagen,
           validation_data=val_img_datagen,
           validation_steps=val_steps_per_epoch,
           )
-#################################################
 
 #For predictions you do not need to compile the model, so ...
 my_model = load_model('saved_models/brats_3d_100epochs_simple_unet_weighted_dice.hdf5', 
@@ -269,7 +249,7 @@ IOU_keras = MeanIoU(num_classes=n_classes)
 IOU_keras.update_state(test_pred_batch_argmax, test_mask_batch_argmax)
 print("Mean IoU =", IOU_keras.result().numpy())
 
-#############################################
+
 #Predict on a few test images, one at a time
 #Try images: 
 img_num = 82
